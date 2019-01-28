@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xmarkclx/cordova-plugin-photo-library"
+    "url": "git+https://github.com/xmarkclx/cordova-plugin-photo-library-sism"
   },
   "author": {
     "name": "Roman Viskin",
@@ -21,9 +21,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/terikon/cordova-plugin-photo-library/issues"
+    "url": "https://github.com/terikon/cordova-plugin-photo-library-sism/issues"
   },
-  "homepage": "https://github.com/terikon/cordova-plugin-photo-library#readme",
+  "homepage": "https://github.com/terikon/cordova-plugin-photo-library-sism#readme",
   "devDependencies": {
     "eslint": "^3.14.1",
     "@types/cordova": "^0.0.34",
