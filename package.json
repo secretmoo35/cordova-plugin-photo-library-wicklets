@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-photo-library-sism",
-  "version": "2.2.3",
+  "version": "2.2.6",
   "description": "Plugin that just gets photos from the gallery. Actually updated so it almost always works.",
   "main": "index.js",
   "scripts": {
