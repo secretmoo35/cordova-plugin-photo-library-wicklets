@@ -22,6 +22,13 @@ So follow the instructions from that one, but instead use this:
 npm i --save cordova-plugin-photo-library
 ```
 
+or if you have the old one installed already:
+
+```bash
+cordova plugin rm cordova-plugin-photo-library
+cordova plugin add cordova-plugin-photo-library-sism
+```
+
 Yeah, you will still need the "@ionic-native/photo-library" plugin.
 
 # I've Got Issues
