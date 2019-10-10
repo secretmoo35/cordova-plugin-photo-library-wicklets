@@ -19,7 +19,8 @@ Anyway, instead of installing the original plugin, install this one.
 So follow the instructions from that one, but instead use this:
 
 ```bash
-npm i --save cordova-plugin-photo-library
+cordova plugin add cordova-plugin-photo-library-sism
+npm i --save cordova-plugin-photo-library-sism
 ```
 
 or if you have the old one installed already:
