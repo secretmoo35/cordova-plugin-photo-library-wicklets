@@ -10,6 +10,10 @@ There are many things that our projects needed that go beyond what the main plug
 
 So, to go beyond that, this repo will always be updated as long as I am working on the projects it is dependent on. 
 
+# What I Use It For, and thus what will almost always work
+- Get permissions to access gallery/camera roll.
+- Save image to gallery
+
 # How to Use?
 
 Just use this as a drop-in replacement for that plugin.
