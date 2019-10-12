@@ -10,6 +10,10 @@ There are many things that our projects needed that go beyond what the main plug
 
 So, to go beyond that, this repo will always be updated as long as I am working on the projects it is dependent on. 
 
+# What I Use It For, and thus what will almost always work
+- Get permissions to access gallery/camera roll.
+- Save image to gallery
+
 # How to Use?
 
 Just use this as a drop-in replacement for that plugin.
@@ -19,7 +23,15 @@ Anyway, instead of installing the original plugin, install this one.
 So follow the instructions from that one, but instead use this:
 
 ```bash
-npm i --save cordova-plugin-photo-library
+cordova plugin add cordova-plugin-photo-library-sism
+npm i --save cordova-plugin-photo-library-sism
+```
+
+or if you have the old one installed already:
+
+```bash
+cordova plugin rm cordova-plugin-photo-library
+cordova plugin add cordova-plugin-photo-library-sism
 ```
 
 Yeah, you will still need the "@ionic-native/photo-library" plugin.
