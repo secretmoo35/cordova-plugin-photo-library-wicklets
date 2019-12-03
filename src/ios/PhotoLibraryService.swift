@@ -662,67 +662,77 @@ final class PhotoLibraryService {
 
     }
 
-    func saveVideo(_ url: String, album: String, completion: @escaping (_ libraryItem: NSDictionary?, _ error: String?)->Void) {
-
-        guard let videoURL = URL(string: url) else {
+func saveVideo(_ url: String, album: String, completion: @escaping (_ assetId: String?, _ error: String?)->Void) { // TODO: should return library item
+        guard let videoURL = URL(string: "https://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4") else {
             completion(nil, "Could not parse DataURL")
             return
         }
 
-        let assetsLibrary = ALAssetsLibrary()
+        func downloadVideoLinkAndCreateAsset(_ videoLink: String, photoAlbum: PHAssetCollection) {
 
-        func saveVideo(_ photoAlbum: PHAssetCollection) {
+            // use guard to make sure you have a valid url
+            guard let videoURL = URL(string: videoLink) else { return }
 
-            // TODO: new way, seems not supports dataURL
-            //            if !UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(videoURL.relativePath!) {
-            //                completion(url: nil, error: "Provided video is not compatible with Saved Photo album")
-            //                return
-            //            }
-            //            UISaveVideoAtPathToSavedPhotosAlbum(videoURL.relativePath!, nil, nil, nil)
+            guard let documentsDirectoryURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
 
-            if !assetsLibrary.videoAtPathIs(compatibleWithSavedPhotosAlbum: videoURL) {
+            // check if the file already exist at the destination folder if you don't want to download it twice
+            if !FileManager.default.fileExists(atPath: documentsDirectoryURL.appendingPathComponent(videoURL.lastPathComponent).path) {
 
-                // TODO: try to convert to MP4 as described here?: http://stackoverflow.com/a/39329155/1691132
+                // set up your download task
+                URLSession.shared.downloadTask(with: videoURL) { (location, response, error) -> Void in
 
-                completion(nil, "Provided video is not compatible with Saved Photo album")
-                return
-            }
+                    // use guard to unwrap your optional url
+                    guard let location = location else { return }
 
-            assetsLibrary.writeVideoAtPath(toSavedPhotosAlbum: videoURL) { (assetUrl: URL?, error: Error?) in
+                    // create a deatination url with the server response suggested file name
+                    let destinationURL = documentsDirectoryURL.appendingPathComponent(response?.suggestedFilename ?? videoURL.lastPathComponent)
 
-                if error != nil {
-                    completion(nil, "Could not write video to album: \(error)")
-                    return
-                }
+                    do {
 
-                guard let assetUrl = assetUrl else {
-                    completion(nil, "Writing video to album resulted empty asset")
-                    return
-                }
+                        try FileManager.default.moveItem(at: location, to: destinationURL)
 
-                self.putMediaToAlbum(assetsLibrary, url: assetUrl, album: album, completion: { (error) in
+                        PHPhotoLibrary.requestAuthorization({ (authorizationStatus: PHAuthorizationStatus) -> Void in
 
-
-                    if error != nil {
-                        completion(nil, error)
-                    } else {
-                        let fetchResult = PHAsset.fetchAssets(withALAssetURLs: [assetUrl], options: nil)
-                        var libraryItem: NSDictionary? = nil
-                        if fetchResult.count == 1 {
-                            let asset = fetchResult.firstObject
-                            if let asset = asset {
-                                libraryItem = self.assetToLibraryItem(asset: asset, useOriginalFileNames: false, includeAlbumData: true)
+                            // check if user authorized access photos for your app
+                            if authorizationStatus == .authorized {
+                                PHPhotoLibrary.shared().performChanges({
+                                    let assetRequest = PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: destinationURL)!
+                                    let albumChangeRequest = PHAssetCollectionChangeRequest(for: photoAlbum)
+                                    let placeHolder = assetRequest.placeholderForCreatedAsset
+                                    albumChangeRequest?.addAssets([placeHolder!] as NSArray)
+                                }) { (isSuccess, error) in
+                                    do{
+                                        try FileManager.default.removeItem(at: destinationURL)
+                                    } catch {
+                                        completion(nil, String(describing: error))
+                                    }
+                                    if isSuccess {
+                                        completion(videoLink, nil)
+                                    } else {
+                                        completion(nil, "Could not write video to album: (String(describing: error)")
+                                    }
+                                }
                             }
-                        }
-                        completion(libraryItem, nil)
-                    }
-                })
+                        })
+
+                    } catch { completion(nil, String(describing: error)) }
+
+                }.resume()
+
+            } else {
+                completion(nil, "File already exists at destination url. Try again.")
+                do {
+                try FileManager.default.removeItem(atPath: documentsDirectoryURL.appendingPathComponent(videoURL.lastPathComponent).path)
+                } catch {
+                    completion(nil, "Can't delete old file.")
+                }
             }
 
         }
 
         if let photoAlbum = PhotoLibraryService.getPhotoAlbum(album) {
-            saveVideo(photoAlbum)
+            // saveVideo(photoAlbum)
+            downloadVideoLinkAndCreateAsset(url, photoAlbum: photoAlbum)
             return
         }
 
@@ -733,7 +743,7 @@ final class PhotoLibraryService {
                 return
             }
 
-            saveVideo(photoAlbum)
+            downloadVideoLinkAndCreateAsset(url, photoAlbum: photoAlbum)
 
         }
 

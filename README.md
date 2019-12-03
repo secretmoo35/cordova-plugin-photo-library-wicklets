@@ -13,6 +13,7 @@ So, to go beyond that, this repo will always be updated as long as I am working 
 # What I Use It For, and thus what will almost always work
 - Get permissions to access gallery/camera roll.
 - Save image to gallery
+- Save video to gallery from external URL (even https:// URL 😎)
 
 # How to Use?
 
