@@ -629,7 +629,8 @@ public class PhotoLibraryService {
 
     } else {
 
-      String extension = url.contains(".") ? url.substring(url.lastIndexOf(".")) : "";
+      String noQ = url.split("\\?")[0]; //no q
+      String extension = url.contains(".") ? noQ.substring(noQ.lastIndexOf(".")) : "";
       targetFile = getImageFileName(albumDirectory, extension);
 
       InputStream is;
